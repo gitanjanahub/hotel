@@ -2,7 +2,10 @@
 
 namespace App\Livewire;
 
+use Livewire\Attributes\Title;
 use Livewire\Component;
+
+#[Title('Home Page')]
 
 class HomePage extends Component
 {

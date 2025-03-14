@@ -1,5 +1,10 @@
 <?php
 
+use App\Livewire\AboutUsPage;
+use App\Livewire\ContactUsPage;
+use App\Livewire\HomePage;
+use App\Livewire\RoomDetailsPage;
+use App\Livewire\RoomPage;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', HomePage::class)->name('home');
+Route::get('/rooms', RoomPage::class)->name('rooms');
+Route::get('/about-us', AboutUsPage::class)->name('about');
+Route::get('/contact-us', ContactUsPage::class)->name('contact');
