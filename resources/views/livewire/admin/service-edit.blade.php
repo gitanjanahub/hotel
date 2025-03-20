@@ -40,6 +40,37 @@
                             @enderror
                         </div>
 
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea wire:model="description" class="form-control"></textarea>
+                            @error('description') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="homePage">Display Home Page</label>
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" wire:model="home_page" class="custom-control-input" id="homePage" @checked($this->home_page)>
+                                <label class="custom-control-label" for="homePage"></label>
+                            </div>
+                        </div>
+
+                        <!-- Image -->
+                        {{-- <div class="form-group">
+                            <label for="image">Image</label>
+                            <input type="file" id="image" class="form-control-file" wire:model="image">
+                            @error('image') <span class="text-danger">{{ $message }}</span> @enderror
+
+                            @if ($image)
+                                <p>Preview:</p>
+                                @if (!is_string($image))
+                                    <img src="{{ $image->temporaryUrl() }}" width="100">
+                                @else
+                                    <img src="{{ asset('storage/' . $image) }}" width="100">
+                                @endif
+                            @endif
+
+                        </div> --}}
+
 
                         <div class="form-group">
                             <label for="isActive">Is Active</label>

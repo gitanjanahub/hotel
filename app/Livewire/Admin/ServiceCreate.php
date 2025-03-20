@@ -14,7 +14,9 @@ use Livewire\Component;
 class ServiceCreate extends Component
 {
 
-    public $name;
+    public $name, $description;
+    //public $image;
+    public $home_page = 0;
     public $is_active = 0;
 
 
@@ -24,6 +26,9 @@ class ServiceCreate extends Component
         // Validate the input fields, including the image
         $this->validate([
             'name' => 'required|min:3|max:255',
+            'description' => 'string',
+            //'image' => 'required|image|max:2048',
+            'home_page' => 'required|boolean',
             'is_active' => 'required|boolean',
         ]);
 
@@ -33,13 +38,21 @@ class ServiceCreate extends Component
         // Save the service to the database
         $saved = Service::create([
             'name' => $this->name,
+            'description' => $this->description,
+            'home_page' => $this->home_page ? 1 : 0, // Convert true/false to 1/0
             'is_active' => $this->is_active ? 1 : 0, // Convert true/false to 1/0
         ]);
+
+        // Only after successful validation and room creation, handle file uploads
+        // if ($this->image) {
+        //     $imagePath = $this->image->store('images/services', 'public');
+        //     $saved->update(['image' => $imagePath]);
+        // }
 
         if($saved){
 
             // Reset form fields after successful submission
-            $this->reset(['name', 'is_active']);
+            $this->reset(['name', 'description' , 'home_page' , 'is_active']);
 
             // Send success message and redirect
             session()->flash('message', 'Service created successfully!');

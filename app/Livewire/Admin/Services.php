@@ -45,6 +45,18 @@ class Services extends Component
         }
     }
 
+    public function homeToggleActive($serviceId, $homePage)
+    {
+        $service = Service::find($serviceId);
+
+        if ($service) {
+            // Set is_active based on checkbox state
+            $service->home_page = $homePage ? 1 : 0;
+            $service->save();
+            session()->flash('message', 'Status Changed successfully!');
+        }
+    }
+
     public function confirmDelete($id)
     {
         //$this->serviceIdToDelete = $id;

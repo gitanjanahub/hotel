@@ -38,6 +38,22 @@
                                         </tr>
 
                                         <tr>
+                                            <th style="width: 30%;">Description:</th>
+                                            <td>{{ $service->description }}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>Home Page Display:</th>
+                                            <td>
+                                                @if($service->home_page)
+                                                    <span class="badge badge-success">Active</span>
+                                                @else
+                                                    <span class="badge badge-danger">Inactive</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+
+                                        <tr>
                                             <th>Status:</th>
                                             <td>
                                                 @if($service->is_active)
