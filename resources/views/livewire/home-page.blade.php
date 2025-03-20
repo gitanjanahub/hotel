@@ -103,7 +103,7 @@
             <div class="row">
                 <div class="col-lg-4 col-sm-6">
                     <div class="service-item">
-                        <i class="flaticon-036-parking"></i>
+                        {{-- <i class="flaticon-036-parking"></i> --}}
                         <h4>Travel Plan</h4>
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
                             labore et dolore magna.</p>
@@ -111,7 +111,7 @@
                 </div>
                 <div class="col-lg-4 col-sm-6">
                     <div class="service-item">
-                        <i class="flaticon-033-dinner"></i>
+                        {{-- <i class="flaticon-033-dinner"></i> --}}
                         <h4>Catering Service</h4>
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
                             labore et dolore magna.</p>

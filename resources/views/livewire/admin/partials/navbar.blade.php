@@ -37,6 +37,14 @@
                         </a>
                     </li>
 
+                    <li class="nav-item">
+                        <a wire:navigate href="{{ route('admin.banner') }}"
+                           class="nav-link {{ request()->is('admin/banner') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-user"></i>
+                            <p>Home Banner</p>
+                        </a>
+                    </li>
+
 
                     <!-- services -->
                     <li class="nav-item">
@@ -138,12 +146,30 @@
                         </a>
                     </li>
 
+                    <!-- Gallery -->
+                    <li class="nav-item">
+                        <a wire:navigate href="{{ route('admin.galleries') }}"
+                           class="nav-link {{ request()->is('admin/galleries*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-image"></i>
+                            <p>Gallery</p>
+                        </a>
+                    </li>
+
                     <!-- Contact Us -->
                     <li class="nav-item">
                         <a wire:navigate href="{{ route('admin.company-details') }}"
                            class="nav-link {{ request()->is('admin/company-details') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-image"></i>
                             <p>Company Details</p>
+                        </a>
+                    </li>
+
+                    <!-- Testimonials -->
+                    <li class="nav-item">
+                        <a wire:navigate href="{{ route('admin.testimonials') }}"
+                           class="nav-link {{ request()->is('admin/testimonials*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-image"></i>
+                            <p>Testimonials</p>
                         </a>
                     </li>
                 </ul>

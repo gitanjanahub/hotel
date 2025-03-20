@@ -4,12 +4,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="font-weight-bold text-dark">About Us</h1>
+                    <h1 class="font-weight-bold text-dark">Banner</h1>
                 </div>
                 {{-- <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <a wire:navigate href="{{ route('admin.about-us') }}" class="btn btn-primary rounded-pill shadow-sm">
-                            <i class="fas fa-arrow-left"></i> Back to About Us
+                        <a wire:navigate href="{{ route('admin.banner') }}" class="btn btn-primary rounded-pill shadow-sm">
+                            <i class="fas fa-arrow-left"></i> Back to Banner
                         </a>
                     </ol>
                 </div> --}}
@@ -24,7 +24,7 @@
                 <div class="col-md-12">
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title font-weight-bold">About Us Details</h3>
+                            <h3 class="card-title font-weight-bold">Banner Details</h3>
                         </div>
 
                         <div class="container mt-4">
@@ -32,12 +32,7 @@
                                 <div class="alert alert-success">{{ session('message') }}</div>
                             @endif
 
-                            <form wire:submit.prevent="saveAboutUs">
-                                <div class="form-group">
-                                    <label>Name</label>
-                                    <input type="text" wire:model="name" class="form-control">
-                                    @error('name') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
+                            <form wire:submit.prevent="save">
 
                                 <div class="form-group">
                                     <label>Title</label>
@@ -45,11 +40,7 @@
                                     @error('title') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
 
-                                <div class="form-group">
-                                    <label>Short Description</label>
-                                    <textarea wire:model="short_description" class="form-control"></textarea>
-                                    @error('short_description') <span class="text-danger">{{ $message }}</span> @enderror
-                                </div>
+
 
                                 <div class="form-group">
                                     <label>Description</label>
@@ -62,19 +53,25 @@
                                         <input type="file" wire:model="images" class="form-control" accept="image/*" multiple>
                                         @error('images.*') <span class="text-danger">{{ $message }}</span> @enderror
 
-                                        @if($images)
+                                        {{-- @if($images)
                                             <div class="mt-3">
                                                 @foreach($images as $image)
                                                     <img src="{{ $image->temporaryUrl() }}" width="100" class="m-2">
                                                 @endforeach
                                             </div>
-                                        @endif
+                                        @endif --}}
 
-                                        @if(isset($aboutUs->images))
-    @foreach(json_decode($aboutUs->images) as $image)
-        <img src="{{ asset('storage/' . $image) }}" width="100" class="m-2">
-    @endforeach
-@endif
+                                        @if(isset($banner->images))
+                                        @foreach(json_decode($banner->images) as $image)
+                                            <div class="d-inline-block position-relative m-2">
+                                                <img src="{{ asset('storage/' . $image) }}" width="100">
+                                                <button type="button" class="btn btn-danger btn-sm position-absolute" style="top:0; right:0;" wire:click="deleteImage('{{ $image }}')">
+                                                    &times;
+                                                </button>
+                                            </div>
+                                        @endforeach
+                                    @endif
+
 
                                     </div>
 
