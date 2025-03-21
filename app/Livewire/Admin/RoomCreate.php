@@ -113,7 +113,8 @@ class RoomCreate extends Component
 
         session()->flash('message', 'Room created successfully!');
         //return redirect()->route('admin.rooms');
-        return $this->redirect('/rooms', navigate:true);
+        //return $this->redirect('/rooms', navigate:true);
+        return redirect()->route('admin.rooms');
 
     }
 

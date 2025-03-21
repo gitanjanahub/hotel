@@ -1,23 +1,14 @@
 <div class="content-wrapper" style="margin-left: 5% !important;">
-
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
                     <h1 class="font-weight-bold text-dark">About Us</h1>
                 </div>
-                {{-- <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <a wire:navigate href="{{ route('admin.about-us') }}" class="btn btn-primary rounded-pill shadow-sm">
-                            <i class="fas fa-arrow-left"></i> Back to About Us
-                        </a>
-                    </ol>
-                </div> --}}
             </div>
         </div>
     </section>
 
-    <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
             <div class="row">
@@ -32,7 +23,7 @@
                                 <div class="alert alert-success">{{ session('message') }}</div>
                             @endif
 
-                            <form wire:submit.prevent="saveAboutUs">
+                            <form wire:submit.prevent="saveAboutUs" enctype="multipart/form-data">
                                 <div class="form-group">
                                     <label>Name</label>
                                     <input type="text" wire:model="name" class="form-control">
@@ -58,28 +49,58 @@
                                 </div>
 
                                 <div class="form-group">
-                                        <label>Images</label>
-                                        <input type="file" wire:model="images" class="form-control" accept="image/*" multiple>
-                                        @error('images.*') <span class="text-danger">{{ $message }}</span> @enderror
+                                    <label>Home Title</label>
+                                    <input type="text" wire:model="home_title" class="form-control">
+                                    @error('home_title') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
 
-                                        @if($images)
-                                            <div class="mt-3">
-                                                @foreach($images as $image)
-                                                    <img src="{{ $image->temporaryUrl() }}" width="100" class="m-2">
-                                                @endforeach
-                                            </div>
-                                        @endif
+                                <div class="form-group">
+                                    <label>Home Content</label>
+                                    <textarea wire:model="home_content" class="form-control"></textarea>
+                                    @error('home_content') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
 
-                                        @if(isset($aboutUs->images))
-    @foreach(json_decode($aboutUs->images) as $image)
-        <img src="{{ asset('storage/' . $image) }}" width="100" class="m-2">
-    @endforeach
-@endif
+                                {{-- Upload and Display Main Images --}}
+                                <div class="form-group">
+                                    <label>Images</label>
+                                    <input type="file" wire:model="images" class="form-control" accept="image/*" multiple>
+                                    @error('images.*') <span class="text-danger">{{ $message }}</span> @enderror
 
-                                    </div>
+                                    @if($images)
+                                        <div class="mt-3">
+                                            @foreach($images as $image)
+                                                <img src="{{ $image->temporaryUrl() }}" width="100" class="m-2">
+                                            @endforeach
+                                        </div>
+                                    @endif
 
+                                    @if(isset($aboutUs->images))
+                                        @foreach(json_decode($aboutUs->images) as $image)
+                                            <img src="{{ asset('storage/' . $image) }}" width="100" class="m-2">
+                                        @endforeach
+                                    @endif
+                                </div>
 
+                                {{-- Upload and Display Home Images --}}
+                                <div class="form-group">
+                                    <label>Home Images</label>
+                                    <input type="file" wire:model="home_images" class="form-control" accept="image/*" multiple>
+                                    @error('home_images.*') <span class="text-danger">{{ $message }}</span> @enderror
 
+                                    @if($home_images)
+                                        <div class="mt-3">
+                                            @foreach($home_images as $image)
+                                                <img src="{{ $image->temporaryUrl() }}" width="100" class="m-2">
+                                            @endforeach
+                                        </div>
+                                    @endif
+
+                                    @if(isset($aboutUs->home_images))
+                                        @foreach(json_decode($aboutUs->home_images) as $image)
+                                            <img src="{{ asset('storage/' . $image) }}" width="100" class="m-2">
+                                        @endforeach
+                                    @endif
+                                </div>
 
                                 <div class="card-footer">
                                     <button type="submit" class="btn btn-primary">Save Details</button>
@@ -91,5 +112,4 @@
             </div>
         </div>
     </section>
-
 </div>

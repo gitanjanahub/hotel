@@ -15,7 +15,9 @@ class Aboutus extends Component
     use WithFileUploads;
 
     public $name, $title, $short_description, $description;
-    public $images = []; // Make it an array for multiple file uploads
+    public $home_content, $home_title;
+    public $images = [];
+    public $home_images = [];
 
     public function mount()
     {
@@ -25,32 +27,43 @@ class Aboutus extends Component
             $this->title = $aboutUs->title;
             $this->short_description = $aboutUs->short_description;
             $this->description = $aboutUs->description;
+            $this->home_content = $aboutUs->home_content;
+            $this->home_title = $aboutUs->home_title;
         }
     }
 
-    // Validation rules
     protected $rules = [
         'name' => 'required|string|max:255',
         'title' => 'required|string',
         'short_description' => 'required|string',
         'description' => 'required|string',
-        'images.*' => 'image|max:2048', // Validate multiple images
+        'home_title' => 'required|string|max:255',
+        'home_content' => 'required|string',
+        'images.*' => 'image|max:2048',
+        'home_images.*' => 'image|max:2048',
     ];
 
     public function saveAboutUs()
     {
         $this->validate();
 
-        $uploadedImages = [];
+        $aboutUs = ModelsAboutus::first();
 
-        // Loop through each uploaded image
-        foreach ($this->images as $image) {
-            $uploadedImages[] = $image->store('about_us_images', 'public');
+        $uploadedImages = [];
+        if (!empty($this->images)) {
+            foreach ($this->images as $image) {
+                $uploadedImages[] = $image->store('about_us_images', 'public');
+            }
+        }
+
+        $uploadedHomeImages = [];
+        if (!empty($this->home_images)) {
+            foreach ($this->home_images as $image) {
+                $uploadedHomeImages[] = $image->store('about_us_home_images', 'public');
+            }
         }
 
         $formattedDescription = nl2br(e($this->description));
-
-        $aboutUs = ModelsAboutus::first();
 
         if ($aboutUs) {
             $aboutUs->update([
@@ -58,7 +71,10 @@ class Aboutus extends Component
                 'title' => $this->title,
                 'short_description' => $this->short_description,
                 'description' => $formattedDescription,
-                'images' => json_encode($uploadedImages),
+                'home_content' => $this->home_content,
+                'home_title' => $this->home_title,
+                'images' => !empty($uploadedImages) ? json_encode($uploadedImages) : $aboutUs->images,
+                'home_images' => !empty($uploadedHomeImages) ? json_encode($uploadedHomeImages) : $aboutUs->home_images,
             ]);
         } else {
             ModelsAboutus::create([
@@ -66,7 +82,10 @@ class Aboutus extends Component
                 'title' => $this->title,
                 'short_description' => $this->short_description,
                 'description' => $formattedDescription,
+                'home_content' => $this->home_content,
+                'home_title' => $this->home_title,
                 'images' => json_encode($uploadedImages),
+                'home_images' => json_encode($uploadedHomeImages),
             ]);
         }
 
@@ -75,10 +94,8 @@ class Aboutus extends Component
 
     public function render()
     {
-        $aboutUs = ModelsAboutus::first(); // Fetch data from the database
-
         return view('livewire.admin.aboutus', [
-            'aboutUs' => $aboutUs,
+            'aboutUs' => ModelsAboutus::first(),
         ]);
     }
 }

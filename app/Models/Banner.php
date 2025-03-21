@@ -14,4 +14,6 @@ class Banner extends Model
     protected $casts = [
         'images' => 'array', // Cast JSON to array automatically
     ];
+
+
 }
