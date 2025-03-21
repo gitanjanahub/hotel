@@ -20,5 +20,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomePage::class)->name('home');
 Route::get('/rooms', RoomPage::class)->name('rooms');
+Route::get('/rooms/{slug}',RoomDetailsPage::class);
 Route::get('/about-us', AboutUsPage::class)->name('about');
 Route::get('/contact-us', ContactUsPage::class)->name('contact');

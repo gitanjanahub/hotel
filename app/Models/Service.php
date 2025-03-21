@@ -21,4 +21,14 @@ class Service extends Model
         //return $this->belongsToMany(Room::class, 'room_services', 'service_id', 'room_id')
         //->withTimestamps();
     }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', 1);
+    }
+
+    public function scopeHome($query)
+    {
+        return $query->where('home_page', 1);
+    }
 }

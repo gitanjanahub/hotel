@@ -9,7 +9,7 @@
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
-                    <a wire:navigate href="{{ route('admin.room-types') }} " class="btn btn-primary rounded-pill"><i class="fas fa-arrow-left"></i> Back to Rooms</a>
+                    <a wire:navigate href="{{ route('admin.rooms') }} " class="btn btn-primary rounded-pill"><i class="fas fa-arrow-left"></i> Back to Rooms</a>
 
                 </ol>
               </div>

@@ -719,7 +719,7 @@ ul, ol {
 	transition: all 0.3s;
 }
 /*------------------------
-  Home Page Room Section 
+  Home Page Room Section
 -------------------------*/
 
 .hp-room-items {
@@ -2334,4 +2334,23 @@ ul, ol {
 	.blog-details-text .comment-option .single-comment-item .sc-text a {
 		margin-bottom: 10px;
 	}
+}
+
+.room-pagination a {
+    display: inline-block;
+    padding: 10px 15px;
+    margin: 0 5px;
+    border: 1px solid #ddd;
+    color: #333;
+    text-decoration: none;
+}
+
+.room-pagination a.active {
+    background-color: #dfa974;
+    color: #fff;
+    border-color: #EFD4B9;
+}
+
+.room-pagination a:hover {
+    background-color: #dfa974;
 }
