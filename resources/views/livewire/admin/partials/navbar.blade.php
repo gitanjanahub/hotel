@@ -40,7 +40,7 @@
                     <li class="nav-item">
                         <a wire:navigate href="{{ route('admin.banner') }}"
                            class="nav-link {{ request()->is('admin/banner') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-user"></i>
+                            <i class="nav-icon fas fa-file-image"></i>
                             <p>Home Banner</p>
                         </a>
                     </li>
@@ -50,7 +50,7 @@
                     <li class="nav-item">
                         <a wire:navigate href="{{ route('admin.services') }}"
                            class="nav-link {{ request()->is('admin/services*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-image"></i>
+                            <i class="nav-icon fas fas fa-hotel"></i>
                             <p>Services</p>
                         </a>
                     </li>
@@ -68,7 +68,7 @@
                     <li class="nav-item">
                         <a wire:navigate href="{{ route('admin.rooms') }}"
                            class="nav-link {{ request()->is('admin/rooms*') ? 'active' : '' }}">
-                            <i class="nav-icon fa fa-book"></i>
+                            <i class="nav-icon fa fas fa-home"></i>
                             <p>Rooms</p>
                         </a>
                     </li>
@@ -141,7 +141,7 @@
                     <li class="nav-item">
                         <a wire:navigate href="{{ route('admin.about-us') }}"
                            class="nav-link {{ request()->is('admin/about-us') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-user"></i>
+                            <i class="nav-icon fas far fa-address-card"></i>
                             <p>About Us</p>
                         </a>
                     </li>
@@ -150,7 +150,7 @@
                     <li class="nav-item">
                         <a wire:navigate href="{{ route('admin.galleries') }}"
                            class="nav-link {{ request()->is('admin/galleries*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-image"></i>
+                            <i class="nav-icon fas fa-images"></i>
                             <p>Gallery</p>
                         </a>
                     </li>
@@ -159,7 +159,7 @@
                     <li class="nav-item">
                         <a wire:navigate href="{{ route('admin.company-details') }}"
                            class="nav-link {{ request()->is('admin/company-details') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-image"></i>
+                            <i class="nav-icon fas fa-address-card"></i>
                             <p>Company Details</p>
                         </a>
                     </li>
@@ -168,10 +168,20 @@
                     <li class="nav-item">
                         <a wire:navigate href="{{ route('admin.testimonials') }}"
                            class="nav-link {{ request()->is('admin/testimonials*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-image"></i>
+                            <i class="nav-icon fas fa-book"></i>
                             <p>Testimonials</p>
                         </a>
                     </li>
+
+
+                    <li class="nav-item">
+                        <a wire:navigate href="{{ route('admin.news-letter') }}"
+                           class="nav-link {{ request()->is('admin/news-letter') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-user"></i>
+                            <p>Newsletter Subscription</p>
+                        </a>
+                    </li>
+
                 </ul>
             </nav>
 

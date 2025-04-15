@@ -9,13 +9,19 @@ use Livewire\Component;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
 
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ServiceExport;
+use App\Imports\ServiceImport;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Livewire\WithFileUploads;
+
 #[Layout('components.layouts.adminpanel')]
 #[Title('Services')]
 
 class Services extends Component
 {
 
-    use WithPagination, WithoutUrlPagination;
+    use WithPagination, WithoutUrlPagination, WithFileUploads;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -32,6 +38,10 @@ class Services extends Component
     public $showMultipleDeleteModal = false; // Control visibility of the multiple delete modal
 
     protected $listeners = ['refreshComponent' => '$refresh'];
+
+    public $importFile;
+
+    public array $images = [];
 
     public function toggleActive($serviceId, $isActive)
     {
@@ -141,6 +151,91 @@ class Services extends Component
         $this->selectedServices = [];
         $this->showMultipleDeleteModal = false;
     }
+
+    // public function export($format)
+    // {
+    //     $fileName = 'services_' . now()->format('Y-m-d_H-i-s');
+
+    //     if ($format === 'pdf') {
+    //         $data = (new ServiceExport($this->search))->collection();
+    //         $pdf = Pdf::loadView('exports.services_pdf', ['services' => $data]);
+    //         return response()->streamDownload(function () use ($pdf) {
+    //             echo $pdf->stream();
+    //         }, $fileName . '.pdf');
+    //     }
+
+    //     return Excel::download(new ServiceExport($this->search), $fileName . '.' . $format);
+    // }
+    public function export($format)
+    {
+        $fileName = 'services_' . now()->format('Y-m-d_H-i-s');
+
+        // Determine the list of services to export
+        $services = count($this->selectedServices)
+            ? Service::withCount('rooms')->whereIn('id', $this->selectedServices)->get()
+            : Service::withCount('rooms')
+                ->when($this->search, fn ($query) => $query->where('name', 'like', '%' . $this->search . '%'))
+                ->get();
+
+                if ($format === 'pdf') {
+                    // ✅ Map the services into the expected format
+                    $mappedServices = $services->map(function ($service) {
+                        return [
+                            'Name' => $service->name,
+                            'Rooms' => $service->rooms_count,
+                            'Homepage Display' => $service->home_page ? 'Yes' : 'No',
+                            'Is Active' => $service->is_active ? 'Yes' : 'No',
+                            'Created At' => $service->created_at->format('d M Y, h:i A'),
+                        ];
+                    });
+
+                    $pdf = Pdf::loadView('exports.services_pdf', ['services' => $mappedServices]);
+
+                    return response()->streamDownload(function () use ($pdf) {
+                        echo $pdf->stream();
+                    }, $fileName . '.pdf');
+                }
+
+        // For Excel/CSV export
+        return Excel::download(new \App\Exports\ServiceExport($services), $fileName . '.' . $format);
+    }
+
+
+    public function updatedImages()
+    {
+        foreach ($this->images as $image) {
+            $image->storeAs('tmp-service-images', $image->getClientOriginalName());
+        }
+
+        session()->flash('message', 'Images uploaded successfully. You can now import the CSV.');
+    }
+
+    public function importServices()
+    {
+        $this->validate([
+            'importFile' => 'required|file|mimes:xlsx,xls,csv|max:2048',
+        ]);
+
+        try {
+            $import = new ServiceImport();
+            Excel::import($import, $this->importFile);
+
+            if ($import->getRowCount() > 0) {
+                session()->flash('message', 'Services imported successfully!');
+            } else {
+                session()->flash('error', 'The file is empty or contains no valid data.');
+            }
+
+            $this->reset('importFile');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Failed to import services: ' . $e->getMessage());
+        }
+    }
+
+
+
+
+
 
 
     public function render()

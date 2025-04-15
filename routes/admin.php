@@ -12,6 +12,7 @@ use App\Livewire\Admin\CreateGallery;
 use App\Livewire\Admin\Dashboard;
 use App\Livewire\Admin\Galleries;
 use App\Livewire\Admin\Login;
+use App\Livewire\Admin\NewsletterSubscription;
 use App\Livewire\Admin\RoomCreate;
 use App\Livewire\Admin\RoomEdit;
 use App\Livewire\Admin\Rooms;
@@ -77,6 +78,8 @@ Route::middleware('admin')->group(function () {
     Route::get('admin/change-password', ChangePassword::class)->name('admin.change-password');
     Route::get('admin/company-details', CompanyDetails::class)->name('admin.company-details');
     Route::get('admin/about-us', Aboutus::class)->name('admin.about-us');
+
+    Route::get('admin/news-letter', NewsletterSubscription::class)->name('admin.news-letter');
 
     Route::get('admin/test', Test::class)->name('admin.test');
 

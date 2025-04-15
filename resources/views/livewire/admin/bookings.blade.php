@@ -53,6 +53,19 @@
                                         Delete Selected
                                     </button>
 
+                                    @if($bookings->isNotEmpty())
+                                        <div class="d-flex justify-content-end mb-2">
+                                            <div class="btn-group">
+                                                <button wire:click="export('xlsx')" class="btn btn-success btn-sm">Export Excel</button>
+                                                <button wire:click="export('xls')" class="btn btn-primary btn-sm">Export XLS</button>
+                                                <button wire:click="export('csv')" class="btn btn-info btn-sm">Export CSV</button>
+                                                <button wire:click="export('pdf')" class="btn btn-danger btn-sm">Export PDF</button>
+                                            </div>
+                                        </div>
+                                    @endif
+
+
+
                                 </div>
 
                                 <table class="table table-bordered table-hover">

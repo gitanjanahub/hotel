@@ -33,14 +33,30 @@ class RoomCreate extends Component
     public $selected_services = [];
     public $available_rooms;
     public $image;
+    public $home_thumb;
     public $images = [];
     public $is_active = 0;
+    public $description;
+
+    // protected $listeners = [
+    //     'updateDescription' => 'updateDescription'
+    // ];
 
     public function mount()
     {
         $this->roomtypes = RoomType::where('is_active', 1)->get();
         $this->services = Service::where('is_active', 1)->get(); // Fetch only active services
+        //$this->dispatch('setDescription', $this->description);
+
+        $this->dispatch('setDescription', $this->description);
     }
+
+//     public function updateDescription($value)
+// {
+//     $this->description = $value;
+// }
+
+
 
 
 
@@ -59,8 +75,10 @@ class RoomCreate extends Component
             'bed' => 'required|string|max:255',
             'available_rooms' => 'required|integer',
             'image' => 'required|image|max:2048', // Image validation (max 2MB)
+            'home_thumb' => 'required|image|max:2048', // Image validation (max 2MB)
             'images.*' => 'nullable|image|max:2048', // Multiple image validation (max 2MB each)
             'is_active' => 'required|boolean',
+            'description' => 'required|string',
         ]);
 
         //$offerPrice = $this->offer_price ?? 0;  // If offer_price is not set, default it to 0
@@ -79,12 +97,18 @@ class RoomCreate extends Component
             'bed' => $this->bed,
             'available_rooms' => $this->available_rooms,
             'is_active' => $this->is_active ? 1 : 0,
+            'description' => $this->description,
         ]);
 
         // Only after successful validation and room creation, handle file uploads
         if ($this->image) {
             $imagePath = $this->image->store('images/rooms/thumbnails', 'public');
             $room->update(['image' => $imagePath]);
+        }
+
+        if ($this->home_thumb) {
+            $homeimagePath = $this->home_thumb->store('images/rooms/thumbnails', 'public');
+            $room->update(['home_thumb' => $homeimagePath]);
         }
 
         if (is_array($this->images) && count($this->images) > 0) {

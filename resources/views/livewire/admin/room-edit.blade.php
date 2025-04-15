@@ -9,7 +9,7 @@
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <a wire:navigate href="{{ route('admin.room-types') }}" class="btn btn-primary rounded-pill">
+                            <a wire:navigate href="{{ route('admin.rooms') }}" class="btn btn-primary rounded-pill">
                                 <i class="fas fa-arrow-left"></i> Back to Rooms
                             </a>
                         </ol>
@@ -69,28 +69,28 @@
                                             </div>
 
                                             <!-- Room Services -->
-<div class="form-group">
-    <label>Services</label>
-    <div class="d-flex flex-wrap">
-        @foreach ($services as $service)
-            <div class="form-check mr-3">
-                <!-- Preselect services that are already associated with the room -->
-                <input
-                    type="checkbox"
-                    id="service_{{ $service->id }}"
-                    class="form-check-input"
-                    wire:model="selected_services"
-                    value="{{ $service->id }}"
-                    @checked(in_array($service->id, $selected_services))
-                >
-                <label for="service_{{ $service->id }}" class="form-check-label">
-                    {{ $service->name }}
-                </label>
-            </div>
-        @endforeach
-    </div>
-    @error('selected_services') <span class="text-danger">{{ $message }}</span> @enderror
-</div>
+                                            <div class="form-group">
+                                                <label>Services</label>
+                                                <div class="d-flex flex-wrap">
+                                                    @foreach ($services as $service)
+                                                        <div class="form-check mr-3">
+                                                            <!-- Preselect services that are already associated with the room -->
+                                                            <input
+                                                                type="checkbox"
+                                                                id="service_{{ $service->id }}"
+                                                                class="form-check-input"
+                                                                wire:model="selected_services"
+                                                                value="{{ $service->id }}"
+                                                                @checked(in_array($service->id, $selected_services))
+                                                            >
+                                                            <label for="service_{{ $service->id }}" class="form-check-label">
+                                                                {{ $service->name }}
+                                                            </label>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                                @error('selected_services') <span class="text-danger">{{ $message }}</span> @enderror
+                                            </div>
 
 
                                             <!-- Is Active -->
@@ -101,6 +101,13 @@
                                                     <label class="custom-control-label" for="isActive"></label>
                                                 </div>
                                             </div>
+
+                                            <div class="form-group" wire:ignore>
+                                                <label for="description">Room Description</label>
+                                                <textarea id="summernote" class="form-control" wire:model.defer="description" wire:ignore>{{ $description }}</textarea>
+                                                @error('description') <span class="text-danger">{{ $message }}</span> @enderror
+                                            </div>
+
                                         </div>
 
                                         <!-- Column 2 -->
@@ -152,6 +159,22 @@
                                                 @error('image') <span class="text-danger">{{ $message }}</span> @enderror
                                             </div>
 
+
+                                            <div class="form-group">
+                                                <label for="home_thumb">Home Page Thumbnail Image</label>
+                                                <input type="file" id="home_thumb" class="form-control-file" wire:model="home_thumb">
+                                                @if ($home_thumb)
+                                                    <img src="{{ $home_thumb->temporaryUrl() }}" alt="Thumbnail Preview" class="mt-2 img-thumbnail" width="150">
+                                                @else
+                                                  @if ($existingImages['home_thumb'])
+                                                    <img src="{{ Storage::url($existingImages['home_thumb']) }}" alt="Existing Thumbnail" class="img-thumbnail mt-2" style="width: 150px;">
+                                                    @endif
+                                                @endif
+                                                @error('home_thumb') <span class="text-danger">{{ $message }}</span> @enderror
+                                            </div>
+
+
+
                                             <!-- Additional Images -->
                                             <div class="form-group">
                                                 <label for="images">Additional Images</label>
@@ -196,14 +219,99 @@
                                 </div>
                             </form>
 
-                            @if ($message)
-    <div class="alert alert-success">
-        {{ $message }}
-    </div>
-@endif                        </div>
+                                            @if ($img_message)
+                    <div class="alert alert-success">
+                        {{ $img_message }}
+                    </div>
+                @endif
+            </div>
                     </div>
                 </div>
             </div>
         </section>
     </div>
+
+    {{-- <script>
+        document.addEventListener('livewire:load', function () {
+            $('#summernote').summernote({
+                height: 300, // Set height
+                callbacks: {
+                    onChange: function(contents) {
+                        @this.set('description', contents); // Sync with Livewire property
+                    }
+                }
+            });
+
+            // Set initial value from Livewire when loaded
+            Livewire.on('setDescription', content => {
+                $('#summernote').summernote('code', content);
+            });
+        });
+    </script> --}}
+
+    <!-- Ensure jQuery is loaded -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-bs4.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-bs4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script> <!-- Ensure Bootstrap is loaded -->
+
+    <script>
+        // Initialize Summernote editor with full configuration and proper callback
+        $('#summernote').summernote({
+            placeholder: 'Type something cool', // Placeholder text in the editor
+            tabsize: 2, // Tab size for indenting
+            height: 500, // Height of the editor
+            focus: true, // Set focus to the editor on load
+            lang: 'en-US', // Language for the editor
+            maxHeight: 600, // Max height of the editor
+            minHeight: 200, // Min height of the editor
+            airMode: false, // Disable airMode, the floating toolbar
+
+            // Full toolbar configuration with more options
+            toolbar: [
+                // Group 1
+                ['font', ['bold', 'italic', 'underline', 'clear']],
+                ['fontname', ['fontname']],
+                ['style', ['style']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                // Group 2
+                ['insert', ['link', 'picture', 'video']],
+                ['table', ['table']],
+                ['hr', ['hr']],
+                // Group 3
+                ['view', ['fullscreen', 'codeview', 'help']],
+            ],
+
+            // Callbacks for specific events
+            callbacks: {
+                // Triggered when content is changed in the editor
+                onChange: function(contents) {
+                    @this.set('description', contents);  // Set content to Livewire property 'description'
+                },
+                // Triggered when an image is uploaded
+                onImageUpload: function(files) {
+                    let reader = new FileReader();
+                    reader.onload = function(e) {
+                        let image = $('<img>').attr('src', e.target.result);
+                        $('#summernote').summernote('insertNode', image[0]);
+                    };
+                    reader.readAsDataURL(files[0]);
+                },
+                // Triggered when a link is inserted
+                onLinkInsert: function(url) {
+                    console.log('Link inserted:', url);
+                },
+            },
+
+            // Optional: Additional settings for responsiveness, placeholder, etc.
+            focus: true, // Automatically focus the editor when it loads
+            disableDragAndDrop: true, // Disable drag-and-drop of files (images, etc.)
+        });
+    </script>
+
+
+
+
+
 </div>

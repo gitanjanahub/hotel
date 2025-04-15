@@ -2,11 +2,16 @@
 
 namespace App\Livewire\Admin;
 
+use App\Exports\RoomTypeExport;
+use App\Imports\RoomtypeImport;
 use App\Models\RoomType;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 #[Layout('components.layouts.adminpanel')]
 #[Title('Room Types')]
@@ -14,7 +19,7 @@ use Livewire\WithPagination;
 class RoomTypes extends Component
 {
 
-    use WithPagination;
+    use WithPagination, WithFileUploads;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -31,6 +36,8 @@ class RoomTypes extends Component
     public $showMultipleDeleteModal = false; // Control visibility of the multiple delete modal
 
     protected $listeners = ['refreshComponent' => '$refresh'];
+
+    public $importFile;
 
     public function toggleActive($roomTypeId, $isActive)
     {
@@ -120,13 +127,71 @@ class RoomTypes extends Component
             session()->flash('error', 'Some Room Types cannot be deleted because they have associated rooms!');
         } else {
             // Proceed to delete the selected roomtypes
-            RoomType::whereIn('id', $this->selectedroomtypes)->delete();
+            RoomType::whereIn('id', $this->selectedRoomTypes)->delete();
             session()->flash('message', 'Selected Room Types deleted successfully!');
         }
 
         // Reset selected roomtypes and close modal
         $this->selectedRoomTypes = [];
         $this->showMultipleDeleteModal = false;
+    }
+
+    public function importRoomtypes()
+    {
+        $this->validate([
+            'importFile' => 'required|file|mimes:xlsx,xls,csv|max:2048',
+        ]);
+
+        try {
+            $import = new RoomtypeImport(); // ✅ Create an instance
+            Excel::import($import, $this->importFile); // ✅ Pass instance to import
+
+            if ($import->getRowCount() > 0) {
+                session()->flash('message', 'Room types imported successfully!');
+            } else {
+                session()->flash('error', 'The file is empty or contains no valid data.');
+            }
+
+            $this->reset('importFile');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Failed to import room types: ' . $e->getMessage());
+        }
+    }
+
+
+
+
+    public function export($format)
+    {
+        $fileName = 'roomtypes_' . now()->format('Y-m-d_H-i-s');
+
+        // Determine the list of Room Types to export
+        $roomtypes = count($this->selectedRoomTypes)
+            ? RoomType::withCount('rooms')->whereIn('id', $this->selectedRoomTypes)->get()
+            : RoomType::withCount('rooms')
+                ->when($this->search, fn ($query) => $query->where('name', 'like', '%' . $this->search . '%'))
+                ->get();
+
+                if ($format === 'pdf') {
+                    // ✅ Map the Room Types into the expected format
+                    $mappedRoomTypes = $roomtypes->map(function ($roomtype) {
+                        return [
+                            'Room Type Name' => $roomtype->name,
+                            'Rooms' => $roomtype->rooms_count,
+                            'Is Active' => $roomtype->is_active ? 'Yes' : 'No',
+                            'Created At' => $roomtype->created_at->format('d M Y, h:i A'),
+                        ];
+                    });
+
+                    $pdf = Pdf::loadView('exports.roomtypes_pdf', ['roomtypes' => $mappedRoomTypes]);
+
+                    return response()->streamDownload(function () use ($pdf) {
+                        echo $pdf->stream();
+                    }, $fileName . '.pdf');
+                }
+
+        // For Excel/CSV export
+        return Excel::download(new RoomTypeExport($roomtypes), $fileName . '.' . $format);
     }
 
 

@@ -54,6 +54,16 @@
                                     <button class="btn btn-danger btn-sm" wire:click="confirmMultipleDelete" {{ count($selectedRoomTypes) === 0 ? 'disabled' : '' }}>
                                         Delete Selected
                                     </button>
+                                    @if($roomtypes->isNotEmpty())
+                                    <div class="d-flex justify-content-end mb-2">
+                                        <div class="btn-group">
+                                            <button wire:click="export('xlsx')" class="btn btn-success btn-sm">Export Excel</button>
+                                            <button wire:click="export('xls')" class="btn btn-primary btn-sm">Export XLS</button>
+                                            <button wire:click="export('csv')" class="btn btn-info btn-sm">Export CSV</button>
+                                            <button wire:click="export('pdf')" class="btn btn-danger btn-sm">Export PDF</button>
+                                        </div>
+                                    </div>
+                                    @endif
 
                                 </div>
 
@@ -124,6 +134,39 @@
                                 <div class="d-flex justify-content-end mt-3">
                                     {{ $roomtypes->links() }}
                                 </div>
+
+                                <div class="d-flex flex-column gap-2 mt-4">
+                                    <!-- Informational Sentence -->
+
+
+                                    <!-- CSV Upload Section -->
+                                    <div class="border p-2 rounded">
+                                        <strong class="text-primary">Import Room Types via CSV</strong>
+
+                                        <input type="file" wire:model="importFile" class="form-control-file my-1" accept=".csv">
+
+                                        <!-- Import Button (disabled while loading) -->
+                                        <button class="btn btn-secondary btn-sm" wire:click="importRoomtypes" wire:loading.attr="disabled">
+                                            Import CSV
+                                        </button>
+
+                                        <!-- Show loading while import is in progress -->
+                                        <div wire:loading wire:target="importRoomtypes" class="text-warning mt-1">
+                                            Importing...
+                                        </div>
+
+                                        <a href="{{ asset('samples/room_type-import-sample.csv') }}" class="btn btn-link btn-sm" download>
+                                            Download Sample File
+                                        </a>
+
+                                        <small class="text-muted">Upload a .csv file in the required format. Max 2MB.</small>
+                                        @error('importFile') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+
+
+                                </div>
+
+
                             </div>
                         </div>
                     </div>

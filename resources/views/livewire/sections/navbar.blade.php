@@ -6,17 +6,37 @@
                 <div class="row">
                     <div class="col-lg-6">
                         <ul class="tn-left">
-                            <li><i class="fa fa-phone"></i> (12) 345 67890</li>
-                            <li><i class="fa fa-envelope"></i> info.colorlib@gmail.com</li>
+                            @if ($contactDetail->phone)
+                            <li><i class="fa fa-phone"></i> {{ $contactDetail->phone }}</li>
+                            @endif
+
+                            @if ($contactDetail->email)
+                            <li><i class="fa fa-envelope"></i> {{ $contactDetail->email }}</li>
+                            @endif
                         </ul>
                     </div>
                     <div class="col-lg-6">
                         <div class="tn-right">
                             <div class="top-social">
-                                <a href="#"><i class="fa fa-facebook"></i></a>
-                                <a href="#"><i class="fa fa-twitter"></i></a>
-                                <a href="#"><i class="fa fa-tripadvisor"></i></a>
-                                <a href="#"><i class="fa fa-instagram"></i></a>
+
+                                @if ($contactDetail->facebook)
+                                    <a href="{{ $contactDetail->facebook }}" target="_blank"><i class="fa fa-facebook"></i></a>
+                                @endif
+
+                                @if ($contactDetail->twitter)
+                                    <a href="{{ $contactDetail->twitter }}" target="_blank"><i class="fa fa-twitter"></i></a>
+                                @endif
+
+                                @if ($contactDetail->youtube)
+                                   <a href="{{ $contactDetail->youtube }}" target="_blank"><i class="fa fa-youtube-play"></i></a>
+                                @endif
+
+                                @if ($contactDetail->instagram)
+                                  <a href="{{ $contactDetail->instagram }}" target="_blank"><i class="fa fa-instagram"></i></a>
+                                @endif
+
+
+
                             </div>
                             <a href="#" class="bk-btn">Booking Now</a>
                             {{-- <div class="language-option">
@@ -39,8 +59,8 @@
                 <div class="row">
                     <div class="col-lg-2">
                         <div class="logo">
-                            <a href="./index.html">
-                                <img src="img/logo.png" alt="">
+                            <a href="/">
+                                <img src="{{ asset('storage/' . $contactDetail->logo) }}" alt="">
                             </a>
                         </div>
                     </div>

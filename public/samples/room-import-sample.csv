@@ -1,0 +1,3 @@
+name,room_type_id,price_per_night,size,capacity,adults,children,bed,available_rooms,is_active,description,image,home_thumb,images,service_ids
+Deluxe Suite,1,150,35,3,2,1,King,5,1,A luxurious suite with all modern amenities.,deluxe1.jpg,deluxe_thumb.jpg,"deluxe2.jpg,deluxe3.jpg","1,2,4"
+Standard Room,2,80,25,2,2,0,Queen,10,1,Comfortable room ideal for short stays.,standard1.jpg,standard_thumb.jpg,"standard2.jpg,standard3.jpg","1,3"

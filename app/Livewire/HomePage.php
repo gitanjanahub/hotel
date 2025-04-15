@@ -42,7 +42,7 @@ class HomePage extends Component
                     ->get();
 
         $rooms = Room::query()
-                    ->select('id', 'name', 'slug' ,'price_per_night', 'size', 'capacity', 'bed','image')
+                    ->select('id', 'name', 'slug' ,'price_per_night', 'size', 'capacity', 'bed','home_thumb')
                     ->with([
                         'roomType',
                         'roomServices' => function ($query) {

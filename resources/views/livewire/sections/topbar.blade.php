@@ -42,14 +42,31 @@
         </nav>
         <div id="mobile-menu-wrap"></div>
         <div class="top-social">
-            <a href="#"><i class="fa fa-facebook"></i></a>
-            <a href="#"><i class="fa fa-twitter"></i></a>
-            <a href="#"><i class="fa fa-tripadvisor"></i></a>
-            <a href="#"><i class="fa fa-instagram"></i></a>
+            @if ($contactDetail->facebook)
+                <a href="{{ $contactDetail->facebook }}" target="_blank"><i class="fa fa-facebook"></i></a>
+            @endif
+
+            @if ($contactDetail->twitter)
+                <a href="{{ $contactDetail->twitter }}" target="_blank"><i class="fa fa-twitter"></i></a>
+            @endif
+
+            @if ($contactDetail->youtube)
+                <a href="{{ $contactDetail->youtube }}" target="_blank"><i class="fa fa-youtube-play"></i></a>
+            @endif
+
+            @if ($contactDetail->instagram)
+                <a href="{{ $contactDetail->instagram }}" target="_blank"><i class="fa fa-instagram"></i></a>
+            @endif
+
         </div>
         <ul class="top-widget">
-            <li><i class="fa fa-phone"></i> (12) 345 67890</li>
-            <li><i class="fa fa-envelope"></i> info.colorlib@gmail.com</li>
+            @if ($contactDetail->phone)
+                <li><i class="fa fa-phone"></i> {{ $contactDetail->phone }}</li>
+            @endif
+
+            @if ($contactDetail->email)
+                <li><i class="fa fa-envelope"></i> {{ $contactDetail->email }}</li>
+            @endif
         </ul>
     </div>
     <!-- Offcanvas Menu Section End -->

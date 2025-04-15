@@ -2,13 +2,17 @@
 
 namespace App\Livewire\Admin;
 
+use App\Exports\BookingExport;
 use App\Models\Booking;
 use App\Models\Room;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 #[Layout('components.layouts.adminpanel')]
 #[Title('Bookings')]
@@ -318,31 +322,85 @@ public function deleteSelectedBookings()
     //     ]);
     // }
 
-    public function render()
-{
-    $bookings = Booking::query()
-        ->when($this->search, function ($query) {
-            $query->where(function ($q) {
-                $q->where('customer_name', 'like', '%' . $this->search . '%')
-                  ->orWhere('customer_email', 'like', '%' . $this->search . '%')
-                  ->orWhere('customer_phone', 'like', '%' . $this->search . '%')
-                  ->orWhereHas('room', function ($roomQuery) {
-                      $roomQuery->where('name', 'like', '%' . $this->search . '%');
-                  });
-            });
-        })
-        ->when($this->status !== 'all', function ($query) {
-            $query->where('status', $this->status);
-        })
-        ->with('room') // Eager load room details
-        ->latest()
-        ->paginate(10);
+    public function export($format)
+    {
+        $fileName = 'bookings_' . now()->format('Y-m-d_H-i-s');
 
-    return view('livewire.admin.bookings', [
-        'bookings' => $bookings,
-        'totalBookingsCount' => $bookings->total(),
-    ]);
-}
+        // Fetch bookings with search and status filters
+        $bookings = Booking::with('room')
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('customer_name', 'like', '%' . $this->search . '%')
+                    ->orWhere('customer_email', 'like', '%' . $this->search . '%')
+                    ->orWhere('customer_phone', 'like', '%' . $this->search . '%')
+                    ->orWhereHas('room', function ($roomQuery) {
+                        $roomQuery->where('name', 'like', '%' . $this->search . '%');
+                    });
+                });
+            })
+            ->when($this->status !== 'all', function ($query) {
+                $query->where('status', $this->status);
+            })
+            ->latest()
+            ->get();
+
+        if ($format === 'pdf') {
+            $mappedBookings = $bookings->map(function ($booking, $index) {
+                return [
+                    'S.No' => $index + 1,
+                    'Customer Name' => $booking->customer_name,
+                    'Phone' => $booking->customer_phone,
+                    'Room' => optional($booking->room)->name,
+                    'No. of Rooms' => $booking->no_of_rooms,
+                    'Total Price' => number_format($booking->total_price, 2) . ' ' . ($booking->currency ?? 'INR'),
+                    'Payment Status' => ucfirst($booking->payment_status),
+                    'Booking Status' => ucfirst($booking->status),
+                    'Check-In' => Carbon::parse($booking->check_in_datetime)->format('d M Y, g:i A'),
+                    'Check-Out' => Carbon::parse($booking->check_out_datetime)->format('d M Y, g:i A'),
+                    'Booked At' => Carbon::parse($booking->created_at)->format('d M Y, h:i A'),
+                ];
+            });
+
+
+            $pdf = Pdf::loadView('exports.bookings_pdf', [
+                'bookings' => $mappedBookings
+            ]);
+
+            return response()->streamDownload(function () use ($pdf) {
+                echo $pdf->stream();
+            }, $fileName . '.pdf');
+        }
+
+        // Excel/CSV export
+        return Excel::download(new BookingExport($bookings), $fileName . '.' . $format);
+    }
+
+
+    public function render()
+    {
+        $bookings = Booking::query()
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('customer_name', 'like', '%' . $this->search . '%')
+                    ->orWhere('customer_email', 'like', '%' . $this->search . '%')
+                    ->orWhere('customer_phone', 'like', '%' . $this->search . '%')
+                    ->orWhereHas('room', function ($roomQuery) {
+                        $roomQuery->where('name', 'like', '%' . $this->search . '%');
+                    });
+                });
+            })
+            ->when($this->status !== 'all', function ($query) {
+                $query->where('status', $this->status);
+            })
+            ->with('room') // Eager load room details
+            ->latest()
+            ->paginate(10);
+
+        return view('livewire.admin.bookings', [
+            'bookings' => $bookings,
+            'totalBookingsCount' => $bookings->total(),
+        ]);
+    }
 
 
 }
