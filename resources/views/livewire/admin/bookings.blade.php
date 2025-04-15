@@ -220,6 +220,37 @@
                                 <div class="d-flex justify-content-end mt-3">
                                     {{ $bookings->links() }}
                                 </div>
+
+                                <div class="border p-2 rounded">
+                                    <strong class="text-primary">Import Bookings via CSV</strong>
+
+                                    <input type="file" wire:model="importFile" class="form-control-file my-1" accept=".csv">
+
+                                    <!-- Import Button -->
+                                    <button class="btn btn-secondary btn-sm" wire:click="importBookings" wire:loading.attr="disabled">
+                                        Import CSV
+                                    </button>
+
+                                    <!-- Loading text -->
+                                    <div wire:loading wire:target="importBookings" class="text-warning mt-1">
+                                        Importing...
+                                    </div>
+
+                                    <!-- Sample File Link -->
+                                    <a href="{{ asset('samples/booking-import-sample.csv') }}" class="btn btn-link btn-sm" download>
+                                        Download Sample File
+                                    </a>
+
+                                    <small class="text-muted">Upload a .csv file in the required format. Max 2MB.</small>
+                                    @error('importFile') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+
+                                {{-- @if (session()->has('success'))
+                                    <div class="alert alert-success mt-2">
+                                        {{ session('success') }}
+                                    </div>
+                                @endif --}}
+
                             </div>
                         </div>
                     </div>

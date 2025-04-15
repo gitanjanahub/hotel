@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Exports\BookingExport;
+use App\Imports\BookingsImport;
 use App\Models\Booking;
 use App\Models\Room;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -10,6 +11,7 @@ use Carbon\Carbon;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
 use Maatwebsite\Excel\Facades\Excel;
@@ -20,7 +22,7 @@ use Maatwebsite\Excel\Facades\Excel;
 class Bookings extends Component
 {
 
-    use WithPagination, WithoutUrlPagination;
+    use WithPagination, WithoutUrlPagination, WithFileUploads;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -37,6 +39,8 @@ class Bookings extends Component
     public $showDeleteModal = false; // Control visibility of the single delete modal
 
     public $showMultipleDeleteModal = false; // Control visibility of the multiple delete modal
+
+    public $importFile;
 
     protected $queryString = ['search', 'status']; // Maintain URL state
 
@@ -321,6 +325,29 @@ public function deleteSelectedBookings()
     //         'totalBookingsCount' => $bookings->total(),
     //     ]);
     // }
+
+    public function importBookings()
+    {
+        $this->validate([
+            'importFile' => 'required|file|mimes:csv,txt|max:2048', // max 2MB
+        ]);
+
+
+        try {
+            $import = new BookingsImport(); // ✅ Create an instance
+            Excel::import($import, $this->importFile); // ✅ Pass instance to import
+
+            if ($import->getRowCount() > 0) {
+                session()->flash('message', 'Bookings imported successfully!');
+            } else {
+                session()->flash('error', 'The file is empty or contains no valid data.');
+            }
+
+            $this->reset('importFile');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Failed to import Bookings: ' . $e->getMessage());
+        }
+    }
 
     public function export($format)
     {
