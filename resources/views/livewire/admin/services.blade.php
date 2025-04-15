@@ -46,15 +46,29 @@
                             </div>
                             <div class="card-body">
 
-                                <div class="mb-2">
-                                    {{-- <button class="btn btn-danger btn-sm" wire:click="confirmMultipleDelete" {{ count($selectedservices) ? '' : 'disabled' }}>
-                                        Delete Selected
-                                    </button> --}}
 
-                                    <button class="btn btn-danger btn-sm" wire:click="confirmMultipleDelete" {{ count($selectedServices) === 0 ? 'disabled' : '' }}>
-                                        Delete Selected
-                                    </button>
+                                <div class="mb-3">
+                                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
 
+                                        <!-- Delete Selected Button -->
+                                        <div>
+                                            <button class="btn btn-danger btn-sm" wire:click="confirmMultipleDelete" {{ count($selectedServices) === 0 ? 'disabled' : '' }}>
+                                                Delete Selected
+                                            </button>
+                                        </div>
+
+
+                                        <!-- Export Buttons (Only shown if there is data) -->
+                                        @if($services->isNotEmpty())
+                                            <div class="btn-group">
+                                                <button wire:click="export('xlsx')" class="btn btn-success btn-sm">Export Excel</button>
+                                                <button wire:click="export('xls')" class="btn btn-primary btn-sm">Export XLS</button>
+                                                <button wire:click="export('csv')" class="btn btn-info btn-sm">Export CSV</button>
+                                                <button wire:click="export('pdf')" class="btn btn-danger btn-sm">Export PDF</button>
+                                            </div>
+                                        @endif
+
+                                    </div>
                                 </div>
 
                                 <table class="table table-bordered table-hover">
@@ -140,19 +154,62 @@
                                 <div class="d-flex justify-content-end mt-3">
                                     {{ $services->links() }}
                                 </div>
+
+                                <div class="d-flex flex-column gap-2 mt-4">
+                                    <!-- Informational Sentence -->
+                                    <div class="alert alert-info">
+                                        <strong>Note:</strong> Before importing, please upload images first.
+                                    </div>
+
+                                    <!-- CSV Upload Section -->
+                                    <div class="border p-2 rounded">
+                                        <strong class="text-primary">Import Services via CSV</strong>
+
+                                        <input type="file" wire:model="importFile" class="form-control-file my-1" accept=".csv">
+
+                                        <!-- Import Button (disabled while loading) -->
+                                        <button class="btn btn-secondary btn-sm" wire:click="importServices" wire:loading.attr="disabled">
+                                            Import CSV
+                                        </button>
+
+                                        <!-- Show loading while import is in progress -->
+                                        <div wire:loading wire:target="importServices" class="text-warning mt-1">
+                                            Importing...
+                                        </div>
+
+                                        <a href="{{ asset('samples/service-import-sample.csv') }}" class="btn btn-link btn-sm" download>
+                                            Download Sample File
+                                        </a>
+
+                                        <small class="text-muted">Upload a .csv file in the required format. Max 2MB.</small>
+                                        @error('importFile') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    <!-- Image Upload Section -->
+                                    <div class="border p-2 rounded mt-3">
+                                        <strong class="text-primary">Upload Service Images</strong>
+
+                                        <input type="file" wire:model="images" class="form-control-file my-1" multiple accept="image/*">
+
+                                        <!-- Show loading while images are uploading -->
+                                        <div wire:loading wire:target="images" class="text-warning mt-1">
+                                            Uploading images...
+                                        </div>
+
+                                        <small class="text-muted">You can upload multiple service images here. JPEG, PNG only.</small>
+                                        @error('images') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+                                </div>
+
+
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-    </div>
-
-
-
-
-<div>
-    <!-- Delete Confirmation Modal (Single) -->
+    </div><!-- Delete Confirmation Modal (Single) -->
     @if($showDeleteModal)
     <div class="modal fade show" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true" style="display: block;">
         <div class="modal-dialog">
@@ -198,8 +255,6 @@
     </div>
     @endif
 </div>
-
-
 
 
 

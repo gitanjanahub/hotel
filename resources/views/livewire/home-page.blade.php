@@ -131,7 +131,7 @@
                     <div class="row">
                         @foreach($rooms as $room)
                             <div class="col-lg-3 col-md-6">
-                                <div class="hp-room-item set-bg" data-setbg="{{ asset('storage/' . $room->image) }}">
+                                <div class="hp-room-item set-bg" data-setbg="{{ asset('storage/' . $room->home_thumb) }}">
                                     <div class="hr-text">
                                         <h3>{{ $room->name }}</h3>
                                         <h2>{{  Number::currency($room->price_per_night , 'INR') }}<span>/Pernight</span></h2>

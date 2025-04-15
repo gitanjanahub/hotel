@@ -7,17 +7,29 @@
                     <div class="col-lg-4">
                         <div class="ft-about">
                             <div class="logo">
-                                <a href="#">
-                                    <img src="{{ asset('fronttheme/img/footer-logo.png') }}" alt="">
+                                <a href="/">
+                                    <img src="{{ asset('storage/' . $contactDetail->footer_logo) }}" alt="">
                                 </a>
                             </div>
-                            <p>We inspire and reach millions of travelers<br /> across 90 local websites</p>
+                            @if ($contactDetail->description)
+                            <p>{{ $contactDetail->description }}</p>
+                            @endif
                             <div class="fa-social">
-                                <a href="#"><i class="fa fa-facebook"></i></a>
-                                <a href="#"><i class="fa fa-twitter"></i></a>
-                                <a href="#"><i class="fa fa-tripadvisor"></i></a>
-                                <a href="#"><i class="fa fa-instagram"></i></a>
-                                <a href="#"><i class="fa fa-youtube-play"></i></a>
+                                @if ($contactDetail->facebook)
+                                    <a href="{{ $contactDetail->facebook }}" target="_blank"><i class="fa fa-facebook"></i></a>
+                                @endif
+
+                                @if ($contactDetail->twitter)
+                                    <a href="{{ $contactDetail->twitter }}" target="_blank"><i class="fa fa-twitter"></i></a>
+                                @endif
+
+                                @if ($contactDetail->youtube)
+                                    <a href="{{ $contactDetail->youtube }}"  target="_blank"><i class="fa fa-youtube-play"></i></a>
+                                @endif
+
+                                @if ($contactDetail->instagram)
+                                    <a href="{{ $contactDetail->instagram }}" target="_blank"><i class="fa fa-instagram"></i></a>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -25,9 +37,17 @@
                         <div class="ft-contact">
                             <h6>Contact Us</h6>
                             <ul>
-                                <li>(12) 345 67890</li>
-                                <li>info.colorlib@gmail.com</li>
-                                <li>856 Cordia Extension Apt. 356, Lake, United State</li>
+                                @if ($contactDetail->phone)
+                                <li><i ></i> {{ $contactDetail->phone }}</li>
+                            @endif
+
+                            @if ($contactDetail->email)
+                                <li><i></i> {{ $contactDetail->email }}</li>
+                            @endif
+
+                                @if ($contactDetail->address)
+                                <li><i></i> {{ $contactDetail->address }}</li>
+                            @endif
                             </ul>
                         </div>
                     </div>
@@ -35,10 +55,7 @@
                         <div class="ft-newslatter">
                             <h6>New latest</h6>
                             <p>Get the latest updates and offers.</p>
-                            <form action="#" class="fn-form">
-                                <input type="text" placeholder="Email">
-                                <button type="submit"><i class="fa fa-send"></i></button>
-                            </form>
+                            <livewire:newsletter-subscription />
                         </div>
                     </div>
                 </div>
@@ -49,10 +66,9 @@
                 <div class="row">
                     <div class="col-lg-7">
                         <ul>
-                            <li><a href="#">Contact</a></li>
-                            <li><a href="#">Terms of use</a></li>
-                            <li><a href="#">Privacy</a></li>
-                            <li><a href="#">Environmental Policy</a></li>
+                            <li><a wire:navigate href="{{ route('contact') }}">Contact Us</a></li>
+                            <li><a wire:navigate href="{{ route('about') }}">About Us</a></li>
+                            <li><a wire:navigate href="{{ route('rooms') }}">Rooms</a></li>
                         </ul>
                     </div>
                     <div class="col-lg-5">

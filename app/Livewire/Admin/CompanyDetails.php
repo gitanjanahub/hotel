@@ -6,6 +6,7 @@ use App\Models\CompanyDetail;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 #[Layout('components.layouts.adminpanel')]
 #[Title('Company Details')]
@@ -13,8 +14,11 @@ use Livewire\Component;
 class CompanyDetails extends Component
 {
 
+    use WithFileUploads;
+
     public $company_name, $description, $address, $phone, $email, $fax;
     public $facebook, $twitter, $instagram, $youtube, $latitude, $longitude;
+    public $logo, $footer_logo;
 
     public function mount()
     {
@@ -34,6 +38,8 @@ class CompanyDetails extends Component
             $this->youtube = $company->youtube;
             $this->latitude = $company->latitude;
             $this->longitude = $company->longitude;
+            $this->logo = $company->logo;
+            $this->footer_logo = $company->footer_logo;
         }
     }
 
@@ -52,11 +58,25 @@ class CompanyDetails extends Component
             'youtube' => 'nullable|url|max:255',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
+            'logo' => 'required|image|max:2048',
+            'footer_logo' => 'required|image|max:2048'
         ]);
 
 
         // Create or update company details
         $company = CompanyDetail::first();
+
+        if (!empty($this->logo)) {
+            $logoPath = $this->logo->store('logo', 'public');
+        } else {
+            $logoPath = $company ? $company->logo : null;
+        }
+
+        if (!empty($this->footer_logo)) {
+            $footer_logoPath = $this->footer_logo->store('logo', 'public');
+        } else {
+            $footer_logoPath = $company ? $company->footer_logo : null;
+        }
 
         if ($company) {
             // Update existing record
@@ -73,6 +93,8 @@ class CompanyDetails extends Component
                 'youtube' => $this->youtube,
                 'latitude' => $this->latitude,
                 'longitude' => $this->longitude,
+                'logo' => $logoPath,
+                'footer_logo' => $footer_logoPath,
             ]);
         } else {
             // Create new record
@@ -89,6 +111,8 @@ class CompanyDetails extends Component
                 'youtube' => $this->youtube,
                 'latitude' => $this->latitude,
                 'longitude' => $this->longitude,
+                'logo' => $logoPath,
+                'footer_logo' => $footer_logoPath,
             ]);
         }
 

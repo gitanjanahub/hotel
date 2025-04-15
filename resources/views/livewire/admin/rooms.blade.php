@@ -54,6 +54,16 @@
                                     <button class="btn btn-danger btn-sm" wire:click="confirmMultipleDelete" {{ count($selectedRooms) === 0 ? 'disabled' : '' }}>
                                         Delete Selected
                                     </button>
+                                    @if($rooms->isNotEmpty())
+                                    <div class="d-flex justify-content-end mb-2">
+                                        <div class="btn-group">
+                                            <button wire:click="export('xlsx')" class="btn btn-success btn-sm">Export Excel</button>
+                                            <button wire:click="export('xls')" class="btn btn-primary btn-sm">Export XLS</button>
+                                            <button wire:click="export('csv')" class="btn btn-info btn-sm">Export CSV</button>
+                                            <button wire:click="export('pdf')" class="btn btn-danger btn-sm">Export PDF</button>
+                                        </div>
+                                    </div>
+                                    @endif
 
                                 </div>
 
@@ -135,6 +145,61 @@
                                 <div class="d-flex justify-content-end mt-3">
                                     {{ $rooms->links() }}
                                 </div>
+
+                                <div class="d-flex flex-column gap-2 mt-4">
+                                    <!-- Informational Sentence -->
+                                    <div class="alert alert-info">
+                                        <strong>Note:</strong> Before importing, please upload room images first.
+                                    </div>
+
+                                    <!-- CSV Upload Section -->
+                                    <div class="border p-2 rounded">
+                                        <strong class="text-primary">Import Rooms via CSV</strong>
+
+                                        <input type="file" wire:model="importFile" class="form-control-file my-1" accept=".csv">
+
+                                        <!-- Import Button -->
+                                        <button class="btn btn-secondary btn-sm" wire:click="importRooms" wire:loading.attr="disabled">
+                                            Import CSV
+                                        </button>
+
+                                        <div wire:loading wire:target="importRooms" class="text-warning mt-1">
+                                            Importing...
+                                        </div>
+
+                                        <a href="{{ asset('samples/room-import-sample.csv') }}" class="btn btn-link btn-sm" download>
+                                            Download Sample File
+                                        </a>
+
+                                        <small class="text-muted">Upload a .csv file in the required format. Max 2MB.</small>
+                                        @error('importFile') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    <!-- Image Upload Section -->
+                                    <!-- Room Image Upload Section -->
+                                    <div class="border p-2 rounded mt-3">
+                                        <strong class="text-primary">Upload Room Images</strong>
+
+                                        <!-- Image Upload Input -->
+                                        <input type="file" wire:model="roomImages" class="form-control-file my-1" multiple accept="image/*">
+
+                                        <!-- Uploading Indicator -->
+                                        <div wire:loading wire:target="roomImages" class="text-warning mt-1">
+                                            Uploading images...
+                                        </div>
+
+                                        <!-- Upload Instructions -->
+                                        <small class="text-muted">
+                                            You can upload multiple room images here. Use the same names as in the import file (e.g., sample1.jpg).
+                                            Accepted formats: JPEG, PNG. Max size: 2MB per image.
+                                        </small>
+
+                                        @error('roomImages') <span class="text-danger">{{ $message }}</span> @enderror
+                                    </div>
+
+                                </div>
+
+
                             </div>
                         </div>
                     </div>

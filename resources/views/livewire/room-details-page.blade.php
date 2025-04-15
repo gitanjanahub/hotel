@@ -7,7 +7,7 @@
                     <div class="breadcrumb-text">
                         <h2>Our Rooms</h2>
                         <div class="bt-option">
-                            <a href="./home.html">Home</a>
+                            <a href="/">Home</a>
                             <span>Rooms</span>
                         </div>
                     </div>
@@ -23,10 +23,33 @@
             <div class="row">
                 <div class="col-lg-8">
                     <div class="room-details-item">
-                        <img src="img/room/room-details.jpg" alt="">
+                        {{-- <img src="img/room/room-details.jpg" alt=""> --}}
+
+                        <div id="roomCarousel" class="carousel slide" data-ride="carousel">
+                            <div class="carousel-inner">
+                                @foreach ($room->images ?? [] as $key => $image)
+
+                                    <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                                        <img src="{{ asset('storage/' . $image) }}" class="d-block w-100 rounded-lg shadow-md" alt="{{ $room->name }}">
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            <!-- Controls -->
+                            <a class="carousel-control-prev" href="#roomCarousel" role="button" data-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="carousel-control-next" href="#roomCarousel" role="button" data-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </div>
+
+
                         <div class="rd-text">
                             <div class="rd-title">
-                                <h3>Premium King Room</h3>
+                                <h3>{{ $room->name }}</h3>
                                 <div class="rdt-right">
                                     <div class="rating">
                                         <i class="icon_star"></i>
@@ -38,25 +61,29 @@
                                     <a href="#">Booking Now</a>
                                 </div>
                             </div>
-                            <h2>159$<span>/Pernight</span></h2>
+                            <h2>{{  Number::currency($room->price_per_night , 'INR') }}<span>/Pernight</span></h2>
                             <table>
                                 <tbody>
                                     <tr>
                                         <td class="r-o">Size:</td>
-                                        <td>30 ft</td>
+                                        <td>{{ $room->size }} sqm</td>
                                     </tr>
                                     <tr>
                                         <td class="r-o">Capacity:</td>
-                                        <td>Max persion 5</td>
+                                        <td>{{ $room->capacity }}</td>
                                     </tr>
                                     <tr>
                                         <td class="r-o">Bed:</td>
-                                        <td>King Beds</td>
+                                        <td>{{ $room->bed }}</td>
                                     </tr>
-                                    <tr>
-                                        <td class="r-o">Services:</td>
-                                        <td>Wifi, Television, Bathroom,...</td>
-                                    </tr>
+                                    @if($room->roomServices->isNotEmpty())
+                                        <tr>
+                                            <td class="r-o">Services:</td>
+                                                <td>
+                                                    {{ $room->roomServices->pluck('name')->join(', ') }}
+                                                </td>
+                                        </tr>
+                                    @endif
                                 </tbody>
                             </table>
                             <p class="f-para">Motorhome or Trailer that is the question for you. Here are some of the
@@ -177,3 +204,12 @@
     </section>
     <!-- Room Details Section End -->
 </div>
+
+{{-- <script>
+    $(document).ready(function() {
+        $('#roomCarousel').carousel({
+            interval: 3000, // Auto slide every 3 seconds
+            pause: 'hover'
+        });
+    });
+</script> --}}

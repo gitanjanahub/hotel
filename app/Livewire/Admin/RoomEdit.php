@@ -8,6 +8,7 @@ use App\Models\RoomType;
 use App\Models\Service;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -32,10 +33,21 @@ class RoomEdit extends Component
     public $selected_services = [];
     public $available_rooms;
     public $image;
+    public $home_thumb;
     public $images = [];
     public $is_active;
     public $existingImages = [];
-    public $message;
+    public $img_message;
+    public $description;
+
+
+    // #[On('updateDescription')]
+    // public function updateDescription($description)
+    // {
+
+    //     $this->description = $description; // ✅ Directly assign the value
+    // }
+
 
     public function mount($id)
     {
@@ -54,6 +66,7 @@ class RoomEdit extends Component
         $this->bed = $this->room->bed;
         $this->available_rooms = $this->room->available_rooms;
         $this->is_active = $this->room->is_active;
+        $this->description = $this->room->description;
         $this->selected_services = $this->room
                                         ->roomServices()
                                         ->whereNull('room_services.deleted_at') // Ensure only non-deleted services are retrieved
@@ -62,12 +75,19 @@ class RoomEdit extends Component
 
         //dd($this->selected_services);
 
+        $this->dispatch('setDescription', $this->description);
+
         // Load existing images
         $this->existingImages = [
             'image' => $this->room->image,
+            'home_thumb' => $this->room->home_thumb,
             'images' => is_string($this->room->images) ? json_decode($this->room->images, true) ?? [] : [],
         ];
     }
+
+
+
+
 
     public function deleteImage($imagePath, $key)
     {
@@ -81,11 +101,13 @@ class RoomEdit extends Component
         $this->room->images = json_encode($this->existingImages['images']);
         $this->room->save();
 
-        $this->message = "Image deleted successfully.";
+        $this->img_message = "Image deleted successfully.";
     }
 
     public function update()
     {
+
+        //dd($this->description);
         $this->validate([
             'name' => 'required|string|max:255',
             'room_type_id' => 'required|integer|exists:room_types,id',
@@ -97,8 +119,10 @@ class RoomEdit extends Component
             'bed' => 'required|string|max:255',
             'available_rooms' => 'required|integer',
             'image' => 'nullable|image|max:2048',
+            'home_thumb' => 'nullable|image|max:2048', // Image validation (max 2MB)
             'images.*' => 'nullable|image|max:2048',
             'is_active' => 'boolean',
+            'description' => 'required',
             'selected_services.*' => 'integer|exists:services,id',
         ]);
 
@@ -113,6 +137,7 @@ class RoomEdit extends Component
             'bed' => $this->bed,
             'available_rooms' => $this->available_rooms,
             'is_active' => $this->is_active,
+            'description' => $this->description,
         ]);
 
         // Handle thumbnail image update
@@ -123,6 +148,15 @@ class RoomEdit extends Component
 
             $thumbPath = $this->image->store('images/rooms/thumbnails', 'public');
             $this->room->update(['image' => $thumbPath]);
+        }
+
+        if ($this->home_thumb) {
+            if (!empty($this->existingImages['home_thumb'])) {
+                Storage::disk('public')->delete($this->existingImages['home_thumb']);
+            }
+
+            $homethumbPath = $this->home_thumb->store('images/rooms/thumbnails', 'public');
+            $this->room->update(['home_thumb' => $homethumbPath]);
         }
 
         // Handle other images

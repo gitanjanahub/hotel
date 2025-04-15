@@ -67,6 +67,16 @@
                                             <label>Fax</label>
                                             <input type="text" wire:model="fax" class="form-control" placeholder="Enter fax">
                                         </div>
+
+                                        <div class="form-group">
+                                            <label>Logo</label>
+                                            <input type="file" wire:model="logo" class="form-control" accept="image/*">
+                                            @error('logo') <span class="text-danger">{{ $message }}</span> @enderror
+                                            @if(isset($logo))
+                                                <img src="{{ asset('storage/' . $logo) }}" width="100" height="100" class="mt-2">
+                                            @endif
+                                        </div>
+
                                     </div>
 
                                     <!-- Right Column -->
@@ -106,7 +116,19 @@
                                             <label>Longitude</label>
                                             <input type="text" wire:model="longitude" class="form-control" placeholder="Enter longitude">
                                         </div>
+                                        <div class="form-group">
+                                            <label>Footer Logo</label>
+                                            <input type="file" wire:model="footer_logo" class="form-control" accept="image/*">
+                                            @error('footer_logo') <span class="text-danger">{{ $message }}</span> @enderror
+                                            @if(isset($footer_logo))
+                                                <img src="{{ asset('storage/' . $footer_logo) }}" width="100" height="100" class="mt-2">
+                                            @endif
+                                        </div>
+
+
+
                                     </div>
+
                                 </div>
 
                                 <div class="text-center mt-3">

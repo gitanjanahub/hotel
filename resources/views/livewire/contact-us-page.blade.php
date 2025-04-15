@@ -6,51 +6,67 @@
                 <div class="col-lg-4">
                     <div class="contact-text">
                         <h2>Contact Info</h2>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                            labore et dolore magna aliqua.</p>
+                        <p>{{ $company_details->description }}</p>
                         <table>
                             <tbody>
                                 <tr>
                                     <td class="c-o">Address:</td>
-                                    <td>856 Cordia Extension Apt. 356, Lake, US</td>
+                                    <td>{{ $company_details->address }}</td>
                                 </tr>
                                 <tr>
                                     <td class="c-o">Phone:</td>
-                                    <td>(12) 345 67890</td>
+                                    <td>{{ $company_details->phone }}</td>
                                 </tr>
                                 <tr>
                                     <td class="c-o">Email:</td>
-                                    <td>info.colorlib@gmail.com</td>
+                                    <td>{{ $company_details->email }}</td>
                                 </tr>
                                 <tr>
                                     <td class="c-o">Fax:</td>
-                                    <td>+(12) 345 67890</td>
+                                    <td>{{ $company_details->fax }}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
                 <div class="col-lg-7 offset-lg-1">
-                    <form action="#" class="contact-form">
+
+                    @if (session()->has('success'))
+                        <div class="alert alert-success">{{ session('success') }}</div>
+                    @endif
+
+                    <form wire:submit.prevent="submit" class="contact-form">
                         <div class="row">
                             <div class="col-lg-6">
-                                <input type="text" placeholder="Your Name">
+                                <input type="text" wire:model="name" placeholder="Your Name">
+                                @error('name') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
                             <div class="col-lg-6">
-                                <input type="text" placeholder="Your Email">
+                                <input type="email" wire:model="email" placeholder="Your Email">
+                                @error('email') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
                             <div class="col-lg-12">
-                                <textarea placeholder="Your Message"></textarea>
+                                <textarea wire:model="message" placeholder="Your Message"></textarea>
+                                @error('message') <span class="text-danger">{{ $message }}</span> @enderror
+                            </div>
+                            <div class="col-lg-12">
                                 <button type="submit">Submit Now</button>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
+
+            <!-- Dynamic Google Map -->
             <div class="map">
-                <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.0606825994123!2d-72.8735845851828!3d40.760690042573295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89e85b24c9274c91%3A0xf310d41b791bcb71!2sWilliam%20Floyd%20Pkwy%2C%20Mastic%20Beach%2C%20NY%2C%20USA!5e0!3m2!1sen!2sbd!4v1578582744646!5m2!1sen!2sbd"
-                    height="470" style="border:0;" allowfullscreen=""></iframe>
+                @if ($company_details->latitude && $company_details->longitude)
+                    <iframe
+                        src="https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q={{ $company_details->latitude }},{{ $company_details->longitude }}"
+                        width="100%" height="470" style="border:0;" allowfullscreen="">
+                    </iframe>
+                @else
+                    <p class="text-center text-danger">Map location is not available.</p>
+                @endif
             </div>
         </div>
     </section>

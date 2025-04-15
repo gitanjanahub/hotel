@@ -103,6 +103,12 @@
                                     </div>
                                 </div>
 
+                                <div class="form-group" wire:ignore>
+                                    <label for="description">Room Description</label>
+                                    <textarea id="summernote" class="form-control" wire:model.defer="description" wire:ignore></textarea>
+                                    @error('description') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+
                             </div>
 
                             <!-- Column 2 -->
@@ -142,16 +148,18 @@
                                 </div>
 
 
-
-
-
-
-
                                 <!-- Thumbnail Image -->
                                 <div class="form-group">
                                     <label for="image">Thumbnail Image</label>
                                     <input type="file" id="image" class="form-control-file" wire:model="image">
                                     @error('image') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
+
+                                <!-- Home Page Thumbnail Image -->
+                                <div class="form-group">
+                                    <label for="home_thumb">Home Page Thumbnail Image</label>
+                                    <input type="file" id="home_thumb" class="form-control-file" wire:model="home_thumb">
+                                    @error('home_thumb') <span class="text-danger">{{ $message }}</span> @enderror
                                 </div>
 
                                 <!-- Additional Images -->
@@ -186,5 +194,100 @@
         </section>
         <!-- /.content -->
       </div>
+
+    {{-- <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function initSummernote() {
+                $('#summernote').summernote({
+                    height: 200,
+                    callbacks: {
+                        onChange: function (contents) {
+                            Livewire.emit('updateDescription', contents); // Emit to Livewire
+                        }
+                    }
+                });
+
+                // Set initial value from Livewire
+                Livewire.on('setDescription', (value) => {
+                    $('#summernote').summernote('code', value);
+                });
+            }
+
+            initSummernote(); // Initialize on first load
+
+            Livewire.hook('message.processed', (message, component) => {
+                if (!$('#summernote').hasClass('note-editor')) {
+                    initSummernote(); // Reinitialize only if not already initialized
+                }
+            });
+        });
+    </script> --}}
+
+     <!-- Load jQuery and Summernote -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-bs4.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-bs4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Initialize Summernote editor with full configuration and proper callback
+    $('#summernote').summernote({
+        placeholder: 'Type something cool', // Placeholder text in the editor
+        tabsize: 2, // Tab size for indenting
+        height: 500, // Height of the editor
+        focus: true, // Set focus to the editor on load
+        lang: 'en-US', // Language for the editor
+        maxHeight: 600, // Max height of the editor
+        minHeight: 200, // Min height of the editor
+        airMode: false, // Disable airMode, the floating toolbar
+
+        // Full toolbar configuration with more options
+        toolbar: [
+            // Group 1
+            ['font', ['bold', 'italic', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['style', ['style']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            // Group 2
+            ['insert', ['link', 'picture', 'video']],
+            ['table', ['table']],
+            ['hr', ['hr']],
+            // Group 3
+            ['view', ['fullscreen', 'codeview', 'help']],
+        ],
+
+        // Callbacks for specific events
+        callbacks: {
+            // Triggered when content is changed in the editor
+            onChange: function(contents) {
+                @this.set('description', contents);  // Set content to Livewire property 'description'
+            },
+            // Triggered when an image is uploaded
+            onImageUpload: function(files) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let image = $('<img>').attr('src', e.target.result);
+                    $('#summernote').summernote('insertNode', image[0]);
+                };
+                reader.readAsDataURL(files[0]);
+            },
+            // Triggered when a link is inserted
+            onLinkInsert: function(url) {
+                console.log('Link inserted:', url);
+            },
+        },
+
+        // Optional: Additional settings for responsiveness, placeholder, etc.
+        focus: true, // Automatically focus the editor when it loads
+        disableDragAndDrop: true, // Disable drag-and-drop of files (images, etc.)
+    });
+</script>
+
+
+
+
+
 </div>
+
 

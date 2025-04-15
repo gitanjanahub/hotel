@@ -2,11 +2,16 @@
 
 namespace App\Livewire\Admin;
 
+use App\Exports\RoomExport;
+use App\Imports\RoomImport;
 use App\Models\Room;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 #[Layout('components.layouts.adminpanel')]
 #[Title('Rooms')]
@@ -14,7 +19,7 @@ use Livewire\WithPagination;
 class Rooms extends Component
 {
 
-    use WithPagination;
+    use WithPagination, WithFileUploads;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -29,6 +34,10 @@ class Rooms extends Component
     public $showDeleteModal = false; // Control visibility of the single delete modal
 
     public $showMultipleDeleteModal = false; // Control visibility of the multiple delete modal
+
+    public $importFile;
+
+    public $roomImages = [];
 
     protected $listeners = ['refreshComponent' => '$refresh'];
 
@@ -113,6 +122,69 @@ class Rooms extends Component
         $this->showMultipleDeleteModal = false;  // Hide the modal after deletion
     }
 
+    public function updatedRoomImages()
+    {
+        foreach ($this->roomImages as $image) {
+            $filename = $image->getClientOriginalName();
+            $image->storeAs('tmp-room-images', $filename);
+        }
+        session()->flash('message', 'Images uploaded to temporary folder!');
+    }
+
+
+    public function importRooms()
+    {
+        $this->validate([
+            'importFile' => 'required|file|mimes:csv,txt|max:2048',
+        ]);
+
+        Excel::import(new RoomImport, $this->importFile);
+
+        session()->flash('message', 'Rooms imported successfully!');
+        $this->reset('importFile');
+    }
+
+
+    public function export($format)
+    {
+        $fileName = 'rooms_' . now()->format('Y-m-d_H-i-s');
+
+        // Determine the list of Rooms to export
+        $rooms = count($this->selectedRooms ?? [])
+            ? Room::with(['roomType', 'roomServices' => function ($query) {
+                $query->whereNull('room_services.deleted_at');
+            }])->whereIn('id', $this->selectedRooms)->get()
+            : Room::with(['roomType', 'roomServices' => function ($query) {
+                $query->whereNull('room_services.deleted_at');
+            }])
+            ->when($this->search, fn ($query) => $query->where('name', 'like', '%' . $this->search . '%'))
+            ->get();
+
+        if ($format === 'pdf') {
+            // Map rooms into expected format for PDF
+            $mappedRooms = $rooms->map(function ($room, $index) {
+                return [
+                    'S.No' => $index + 1,
+                    'Room Name' => $room->name,
+                    'Room Type' => optional($room->roomType)->name,
+                    'Services' => $room->roomServices->pluck('name')->implode(', '),
+                    'Is Active' => $room->is_active ? 'Yes' : 'No',
+                    'Created At' => $room->created_at->format('d M Y, h:i A'),
+                ];
+            });
+
+            $pdf = Pdf::loadView('exports.rooms_pdf', ['rooms' => $mappedRooms]);
+
+            return response()->streamDownload(function () use ($pdf) {
+                echo $pdf->stream();
+            }, $fileName . '.pdf');
+        }
+
+        // Excel/CSV Export
+        return Excel::download(new RoomExport($rooms), $fileName . '.' . $format);
+    }
+
+
 
 
     public function render()
@@ -121,12 +193,12 @@ class Rooms extends Component
         // ->with(['roomType', 'roomServices']); // Eager load related models
 
         $query = Room::query()
-    ->with([
-        'roomType',
-        'roomServices' => function ($query) {
-            $query->whereNull('room_services.deleted_at'); // Specify the table name explicitly
-        }
-    ]);
+        ->with([
+            'roomType',
+            'roomServices' => function ($query) {
+                $query->whereNull('room_services.deleted_at'); // Specify the table name explicitly
+            }
+        ]);
 
         // Only apply search if $this->search is not empty
         if (!empty($this->search)) {
