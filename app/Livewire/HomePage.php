@@ -14,62 +14,50 @@ use Livewire\Component;
 #[Title('Home Page')]
 class HomePage extends Component
 {
+
+    public $banner, $bannerImages = [];
+    public $aboutus, $aboutusImages = [];
+    public $services = [];
+    public $rooms = [];
+    public $testimonials = [];
+    public $galleries = [];
+
+    public function mount()
+    {
+        //$this->roomList = Room::select('id', 'name')->active()->get();
+
+        // Banner
+        $this->banner = Banner::select('id', 'title', 'description', 'images')->first();
+        $this->bannerImages = $this->banner && $this->banner->images
+            ? json_decode($this->banner->images, true)
+            : [];
+
+        // About Us
+        $this->aboutus = Aboutus::select('id', 'home_title', 'home_content', 'home_images')->first();
+        $this->aboutusImages = $this->aboutus && $this->aboutus->home_images
+            ? json_decode($this->aboutus->home_images, true)
+            : [];
+
+        // Services
+        $this->services = Service::select('id', 'name', 'description')
+            ->active()->home()->get();
+
+        // Rooms
+        $this->rooms = Room::select('id', 'name', 'slug', 'price_per_night', 'size', 'capacity', 'bed', 'home_thumb')
+            ->with(['roomType', 'roomServices' => fn ($q) => $q->whereNull('room_services.deleted_at')])
+            ->active()->latest()->limit(4)->get();
+
+        // Testimonials
+        $this->testimonials = Testimonial::select('id', 'name', 'content', 'image')->get();
+
+        // Galleries
+        $this->galleries = Gallery::select('id', 'image')->limit(6)->get();
+    }
+
+
+
     public function render()
     {
-        // Fetch banner, selecting specific columns
-        $banner = Banner::query()
-                    ->select('id', 'title', 'description', 'images')
-                    ->first();
-
-        // Decode JSON images into an array
-        if ($banner && $banner->images) {
-            $banner->images = json_decode($banner->images, true);
-        }
-
-        // Fetch About Us details
-        $aboutus = Aboutus::query()
-                    ->select('id', 'home_title', 'home_content', 'home_images')
-                    ->first();
-
-        if ($aboutus && $aboutus->home_images) {
-            $aboutus->home_images = json_decode($aboutus->home_images, true);
-        }
-
-        $services = Service::query()
-                    ->select('id', 'name', 'description')
-                    ->active() //scope
-                    ->home() //scope
-                    ->get();
-
-        $rooms = Room::query()
-                    ->select('id', 'name', 'slug' ,'price_per_night', 'size', 'capacity', 'bed','home_thumb')
-                    ->with([
-                        'roomType',
-                        'roomServices' => function ($query) {
-                            $query->whereNull('room_services.deleted_at');
-                        }
-                    ])
-                    ->active() //scope
-                    ->latest()
-                    ->limit(4)
-                    ->get();
-
-        $testimonials = Testimonial::query()
-                    ->select('id', 'name', 'content', 'image')
-                    ->get();
-
-        $galleries = Gallery::query()
-                    ->select('id', 'image')
-                    ->limit(6)
-                    ->get();
-
-        return view('livewire.home-page', compact(
-            'banner',
-            'aboutus',
-            'services',
-            'rooms',
-            'testimonials',
-            'galleries'
-        ));
+        return view('livewire.home-page');
     }
 }

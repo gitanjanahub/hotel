@@ -45,13 +45,41 @@
                                                 <td>{{ $room->bed }}</td>
                                             </tr>
                                             @if($room->roomServices->isNotEmpty())
-                                            <tr>
+                                            {{-- <tr>
                                                 <td class="r-o">Services:</td>
                                                 <td>
                                                     {{ $room->roomServices->pluck('name')->join(', ') }}
                                                 </td>
+                                            </tr> --}}
+                                            <tr>
+                                                <td class="r-o">Services:</td>
+                                                <td>
+                                                    @php
+                                                        $services = $room->roomServices->pluck('name');
+                                                        $displayServices = $services->take(2)->join(', ');
+                                                    @endphp
+
+                                                    {{ $displayServices }}
+                                                    @if($services->count() > 2)
+                                                        etc.
+                                                    @endif
+                                                </td>
                                             </tr>
+
                                             @endif
+                                            <tr>
+                                                <td class="r-o">Available:</td>
+                                                <td>
+                                                    @if($room->available_rooms == 0)
+                                                        <span class="text-danger fw-bold">Sold Out</span>
+                                                    @elseif($room->available_rooms < 5)
+                                                        <span class="text-danger fw-semibold">{{ $room->available_rooms }} Room{{ $room->available_rooms > 1 ? 's' : '' }} Left</span>
+                                                    @else
+                                                        {{ $room->available_rooms }} Rooms
+                                                    @endif
+                                                </td>
+                                            </tr>
+
                                         </tbody>
                                     </table>
                                     <a href="/rooms/{{ $room->slug }}" class="primary-btn">More Details</a>
