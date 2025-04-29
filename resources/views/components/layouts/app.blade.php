@@ -23,6 +23,8 @@
     <link rel="stylesheet" href="{{ asset('fronttheme/css/style.css') }}" type="text/css">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('styles')
+    {{-- @livewireStyles --}}
 
     {{-- ✅ Add this --}}
     {{-- @livewireStyles --}}
@@ -51,6 +53,14 @@
     {{-- ✅ Add these --}}
     {{-- @livewireScripts
     @livewireScriptConfig --}}
+
+    {{-- @livewireScripts --}}
+    {{-- @livewireAlertScripts --}}
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+
 
 </body>
 </html>
