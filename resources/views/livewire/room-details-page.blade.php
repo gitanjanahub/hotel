@@ -21,11 +21,11 @@
     <section class="room-details-section spad">
         <div class="container">
             <div class="row">
-                <div class="col-lg-8">
+                <div class="col-lg-12">
                     <div class="room-details-item">
                         {{-- <img src="img/room/room-details.jpg" alt=""> --}}
 
-                        <div id="roomCarousel" class="carousel slide" data-ride="carousel">
+                        {{-- <div id="roomCarousel" class="carousel slide" data-ride="carousel">
                             <div class="carousel-inner">
                                 @foreach ($room->images ?? [] as $key => $image)
 
@@ -44,12 +44,52 @@
                                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                 <span class="sr-only">Next</span>
                             </a>
+                        </div> --}}
+
+                        <div id="roomCarousel" class="carousel slide" data-ride="carousel">
+                            <div class="carousel-inner">
+                                @if(!empty($room->images) && is_array($room->images))
+                                    @foreach ($room->images as $key => $image)
+                                        <div class="carousel-item {{ $key === 0 ? 'active' : '' }}">
+                                            <img src="{{ asset('storage/' . $image) }}" class="d-block w-100 rounded-lg shadow-md" alt="{{ $room->name }}">
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <!-- Fallback for no images -->
+                                    <div class="carousel-item active">
+                                        <img src="{{ asset('storage/default-room.jpg') }}" class="d-block w-100 rounded-lg shadow-md" alt="Default Room Image">
+                                    </div>
+                                @endif
+                            </div>
+
+                            <!-- Controls -->
+                            <a class="carousel-control-prev" href="#roomCarousel" role="button" data-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="carousel-control-next" href="#roomCarousel" role="button" data-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Next</span>
+                            </a>
                         </div>
+
 
 
                         <div class="rd-text">
                             <div class="rd-title">
-                                <h3>{{ $room->name }}</h3>
+                                <h3>
+                                    {{ $room->name }}
+                                    @if ($room->available_rooms == 0)
+                                        <span class="room-status red">(Sold Out)</span>
+                                    @elseif ($room->available_rooms == 1)
+                                        <span class="room-status orange">(1 Room)</span>
+                                    @else
+                                        <span class="room-status green">({{ $room->available_rooms }} Rooms)</span>
+                                    @endif
+                                </h3>
+
+
+
                                 <div class="rdt-right">
                                     <div class="rating">
                                         <i class="icon_star"></i>
@@ -58,7 +98,29 @@
                                         <i class="icon_star"></i>
                                         <i class="icon_star-half_alt"></i>
                                     </div>
-                                    <a href="#">Booking Now</a>
+                                    {{-- <a wire:click="goToCheckout" class="bk-btn hover-thumb" style="cursor: pointer;">
+                                        Booking Now
+
+                                    </a> --}}
+
+                                    @if(auth()->check())
+                                        <a type="button" wire:click="goToCheckout" class="bk-btn hover-thumb">Checkout</a>
+                                    @else
+
+                                    @php
+                                        session(['url.intended' => route('checkout')]);
+                                    @endphp
+
+                                        <a type="button" class="bk-btn hover-thumb" data-toggle="modal" data-target="#loginModal">
+                                            Checkout
+                                          </a>
+
+                                          {{-- <livewire:modals.login-signup/> --}}
+                                          {{-- <livewire:auth.login-page/> --}}
+                                    @endif
+
+
+                                    {{-- <a wire:click="goToCheckout" class="bk-btn">Booking Now</a> --}}
                                 </div>
                             </div>
                             <h2>{{  Number::currency($room->price_per_night , 'INR') }}<span>/Pernight</span></h2>
@@ -86,25 +148,16 @@
                                     @endif
                                 </tbody>
                             </table>
-                            <p class="f-para">Motorhome or Trailer that is the question for you. Here are some of the
-                                advantages and disadvantages of both, so you will be confident when purchasing an RV.
-                                When comparing Rvs, a motorhome or a travel trailer, should you buy a motorhome or fifth
-                                wheeler? The advantages and disadvantages of both are studied so that you can make your
-                                choice wisely when purchasing an RV. Possessing a motorhome or fifth wheel is an
-                                achievement of a lifetime. It can be similar to sojourning with your residence as you
-                                search the various sites of our great land, America.</p>
-                            <p>The two commonly known recreational vehicle classes are the motorized and towable.
-                                Towable rvs are the travel trailers and the fifth wheel. The rv travel trailer or fifth
-                                wheel has the attraction of getting towed by a pickup or a car, thus giving the
-                                adaptability of possessing transportation for you when you are parked at your campsite.
-                            </p>
+                            <div class="f-para">{!! $room->description !!}</div>
+
+
                         </div>
                     </div>
                     <div class="rd-reviews">
                         <h4>Reviews</h4>
                         <div class="review-item">
                             <div class="ri-pic">
-                                <img src="img/room/avatar/avatar-1.jpg" alt="">
+                                {{-- <img src="img/room/avatar/avatar-1.jpg" alt=""> --}}
                             </div>
                             <div class="ri-text">
                                 <span>27 Aug 2019</span>
@@ -123,7 +176,7 @@
                         </div>
                         <div class="review-item">
                             <div class="ri-pic">
-                                <img src="img/room/avatar/avatar-2.jpg" alt="">
+                                {{-- <img src="img/room/avatar/avatar-2.jpg" alt=""> --}}
                             </div>
                             <div class="ri-text">
                                 <span>27 Aug 2019</span>
@@ -169,7 +222,7 @@
                         </form>
                     </div>
                 </div>
-                <div class="col-lg-4">
+                {{-- <div class="col-lg-4">
                     <div class="room-booking">
                         <h3>Your Reservation</h3>
                         <form action="#">
@@ -198,18 +251,48 @@
                             <button type="submit">Check Availability</button>
                         </form>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
     </section>
     <!-- Room Details Section End -->
 </div>
 
-{{-- <script>
-    $(document).ready(function() {
-        $('#roomCarousel').carousel({
-            interval: 3000, // Auto slide every 3 seconds
-            pause: 'hover'
+@push('styles')
+
+<style>
+    .room-status {
+        font-weight: 500;
+        margin-left: 8px;
+    }
+
+    .room-status.red {
+        color: red;
+        font-family: 'Courier New', monospace;
+    }
+
+    .room-status.orange {
+        color: orange;
+        font-family: 'Georgia', serif;
+    }
+
+    .room-status.green {
+        color: green;
+        font-family: 'Arial Black', sans-serif;
+    }
+</style>
+
+
+@endpush
+
+{{-- @push('scripts')
+    <script>
+        // Listen for the event dispatched by Livewire
+        Livewire.on('redirectToCheckout', () => {
+            // Redirect to checkout page without reload
+            window.location.href = '/checkout';
         });
-    });
-</script> --}}
+    </script>
+@endpush --}}
+
+

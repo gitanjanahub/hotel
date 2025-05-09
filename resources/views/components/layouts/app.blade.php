@@ -6,11 +6,12 @@
 
     <title>{{ $title ?? 'Page Title' }} | {{ env('APP_NAME') }}</title>
 
-    <!-- Google Font -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Lora:400,700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Cabin:400,500,600,700&display=swap" rel="stylesheet">
 
-    <!-- Css Styles -->
+
+    <!-- CSS Styles -->
     <link rel="stylesheet" href="{{ asset('fronttheme/css/bootstrap.min.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('fronttheme/css/font-awesome.min.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('fronttheme/css/elegant-icons.css') }}" type="text/css">
@@ -22,17 +23,15 @@
     <link rel="stylesheet" href="{{ asset('fronttheme/css/slicknav.min.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ asset('fronttheme/css/style.css') }}" type="text/css">
 
+    {{-- <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script> --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
-    {{-- @livewireStyles --}}
 
-    {{-- ✅ Add this --}}
-    {{-- @livewireStyles --}}
-
+    @livewireStyles
 </head>
 <body>
 
-    {{-- @livewire Components --}}
     @livewire('sections.topbar')
     @livewire('sections.navbar')
 
@@ -40,7 +39,7 @@
 
     @livewire('sections.footer')
 
-    <!-- Js Plugins -->
+    <!-- JS Plugins -->
     <script src="{{ asset('fronttheme/js/jquery-3.3.1.min.js') }}"></script>
     <script src="{{ asset('fronttheme/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('fronttheme/js/jquery.magnific-popup.min.js') }}"></script>
@@ -50,17 +49,14 @@
     <script src="{{ asset('fronttheme/js/owl.carousel.min.js') }}"></script>
     <script src="{{ asset('fronttheme/js/main.js') }}"></script>
 
-    {{-- ✅ Add these --}}
-    {{-- @livewireScripts
-    @livewireScriptConfig --}}
-
-    {{-- @livewireScripts --}}
-    {{-- @livewireAlertScripts --}}
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 
+    @livewireScripts
+    @livewireScriptConfig
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
+{{-- <livewire:wire-elements-modal /> --}}
+<livewire:auth.login-page/>
 </body>
 </html>

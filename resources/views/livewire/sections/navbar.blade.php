@@ -39,16 +39,28 @@
 
                             </div>
                             <a href="#" class="bk-btn">Booking Now</a>
-                            {{-- <div class="language-option">
-                                <img src="img/flag.jpg" alt="">
-                                <span>EN <i class="fa fa-angle-down"></i></span>
-                                <div class="flag-dropdown">
-                                    <ul>
-                                        <li><a href="#">Zi</a></li>
-                                        <li><a href="#">Fr</a></li>
-                                    </ul>
+                            <div class="language-option dropdown">
+                                <span class="dropdown-toggle text-capitalize" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                  Account
+                                </span>
+                                <div class="flag-dropdown dropdown-menu">
+                                  <ul class="list-unstyled mb-0">
+
+                                    @guest
+                                    <li><a class="dropdown-item" data-toggle="modal" data-target="#loginModal">Login</a></li>
+                                    @endguest
+
+                                    @auth
+
+                                    <li><a class="dropdown-item mt-2" wire:navigate href="/logout">Logout</a></li>
+
+                                    @endauth
+                                  </ul>
                                 </div>
-                            </div> --}}
+                            </div>
+
+                            {{-- <livewire:auth.login-page/> --}}
+
                         </div>
                     </div>
                 </div>

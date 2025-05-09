@@ -43,7 +43,7 @@
             </div>
         </div>
 
-        <button type="submit" class="btn btn-primary mt-3 w-100">Check Availability</button>
+        <button type="submit" class="btn btn-warning mt-3 w-100">Check Availability</button>
     </form>
 </div>
 
